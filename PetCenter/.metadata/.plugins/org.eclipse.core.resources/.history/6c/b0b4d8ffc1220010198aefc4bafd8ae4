@@ -1,0 +1,5 @@
+package com.PC.Pet.Clinic.System.doclogin.repository;
+
+public interface MedicineRepository {
+
+}
