@@ -9,10 +9,10 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor // tạo No để tự tùy chỉnh truyền tham số nếu cần
+@AllArgsConstructor // tạo All để debug nếu cần
 @Builder
 public class User extends BaseModel {
     @Column(name = "name")

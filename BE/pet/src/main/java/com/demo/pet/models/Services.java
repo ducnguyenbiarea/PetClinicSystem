@@ -1,29 +1,25 @@
 package com.demo.pet.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.context.annotation.EnableMBeanExport;
 
 import java.util.List;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "service")
+@Table(name = "services")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Service extends BaseModel {
+@NoArgsConstructor
+public class Services extends BaseModel {
     @Column(name = "name", nullable = false, length = 100)
     String name;
 
-    @Column(name = "category", length = 50)
-    String category;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category")
+    CategoryTypes category;
 
     @Column(name = "description", columnDefinition = "TEXT")
     String description;
@@ -31,6 +27,10 @@ public class Service extends BaseModel {
     @Column(name = "price")
     Double price;
 
-    @OneToMany(mappedBy = "service")
+    @OneToMany(mappedBy = "services")
     List<ServiceBooking> serviceBookingList;
+
+    public enum CategoryTypes {
+        EMERGENCY, HEALTH, CARE, MEDICAL
+    }
 }

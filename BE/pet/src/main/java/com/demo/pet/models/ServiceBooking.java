@@ -34,7 +34,7 @@ public class ServiceBooking extends BaseModel {
 
     @ManyToOne
     @JoinColumn(name = "service_id", nullable = false)
-    Service service;
+    Services services;
 
     public enum SubscriptionStatus {
         PENDING, COMPLETED, CANCELLED
