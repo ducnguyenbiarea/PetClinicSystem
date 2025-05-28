@@ -32,9 +32,6 @@ public class Pet extends BaseModel {
     @Column(name = "color", length = 30)
     String color;
 
-    @Column(name = "image", length = 255)
-    String image; // URL to image
-
     @Column(name = "health_info", columnDefinition = "TEXT")
     String healthInfo;
 

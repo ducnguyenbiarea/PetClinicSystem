@@ -18,12 +18,12 @@ public class ServiceBooking extends BaseModel {
     @Column(name = "start_date", nullable = false)
     LocalDate startDate;
 
-    @Column(name = "end_date", nullable = false)
+    @Column(name = "end_date")
     LocalDate endDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", columnDefinition = "VARCHAR(20) DEFAULT 'PENDING'")
-    SubscriptionStatus status; // Pending, Completed, Cancelled
+    SubscriptionStatus status; // PENDING, ACCEPTED, COMPLETED, CANCELLED
 
     @Column(name = "notes", columnDefinition = "TEXT")
     String notes;
@@ -37,6 +37,6 @@ public class ServiceBooking extends BaseModel {
     Services services;
 
     public enum SubscriptionStatus {
-        PENDING, COMPLETED, CANCELLED
+        PENDING, ACCEPTED, COMPLETED, CANCELLED
     }
 }

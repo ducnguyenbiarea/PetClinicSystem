@@ -1,6 +1,7 @@
 package com.demo.pet.controllers;
 
 import com.demo.pet.dtos.UserDTO;
+import com.demo.pet.dtos.subDTO.UserRoleDTO;
 import com.demo.pet.models.User;
 import com.demo.pet.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -53,11 +54,16 @@ public class UserController {
         return ResponseEntity.ok(userService.getMyInfo());
     }
 
+    @GetMapping("/{id}/role")
+    public ResponseEntity<UserRoleDTO> getUserRole(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserRole(id));
+    }
+
     //Only for admin
     @PatchMapping("/{id}/role")
-    public ResponseEntity<User> updateUserRole(
+    public ResponseEntity<UserDTO> updateUserRole(
             @PathVariable Long id,
             @RequestParam String newRole) {
-        return ResponseEntity.ok(userService.updateRole(id, newRole));
+        return ResponseEntity.ok(userService.updateUserRole(id, newRole));
     }
 }

@@ -6,7 +6,17 @@ import com.demo.pet.models.Pet;
 import java.util.List;
 
 public interface PetService {
-    public List<PetDTO> getAllPets();
+    List<PetDTO> getAllPets();
 
-    public PetDTO mapToDTO(Pet pet);
+    PetDTO getPetById(Long id);
+
+    List<PetDTO> getPetsByUserId(Long userId);
+
+    PetDTO addPet(PetDTO petDTO);
+
+    PetDTO updatePet(Long id, PetDTO petDTO);
+
+    PetDTO deletePet(Long id);
+
+    List<PetDTO> getMyPet();
 }
