@@ -1,6 +1,7 @@
 package com.demo.pet.services.Impl;
 
 import com.demo.pet.dtos.UserDTO;
+import com.demo.pet.dtos.subDTO.UserRoleDTO;
 import com.demo.pet.models.User;
 import com.demo.pet.repositories.UserRepo;
 import com.demo.pet.services.UserService;
@@ -49,6 +50,14 @@ public class UserServiceImpl implements UserService{
 
         if (userRepo.existsByPhone(userDTO.getPhone())) {
             throw new RuntimeException("Phone number already in use");
+        }
+
+        if (userDTO.getPassword() == null || userDTO.getPassword().isEmpty()) {
+            throw new RuntimeException("Password cannot be empty");
+        }
+
+        if (userDTO.getEmail() == null || userDTO.getEmail().isEmpty()) {
+            throw new RuntimeException("Email cannot be empty");
         }
 
         User user = new User();
@@ -120,21 +129,28 @@ public class UserServiceImpl implements UserService{
         return UserDTO.fromEntity(user);
     }
 
+    @Override
+    public UserRoleDTO getUserRole(Long id){
+        User user = userRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+
+        return new UserRoleDTO(user.getId(), user.getRoles().name());
+    }
+
 
     @Override
     @Transactional
-    public User updateRole(Long id,String newRole){
+    public UserDTO updateUserRole(Long id, String newRole){
         User user = userRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
         try {
             User.Roles role = User.Roles.valueOf(newRole.toUpperCase());
+            user.setRoles(role);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid role: " + newRole);
         }
-
-        user.setRoles(User.Roles.valueOf(newRole.toUpperCase()));
-
-        return userRepo.save(user);
+        userRepo.save(user);
+        return UserDTO.fromEntity(user);
     }
 }

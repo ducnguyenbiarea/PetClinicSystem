@@ -46,7 +46,13 @@ public class ServicesServiceImpl implements ServicesService {
     public ServicesDTO updateServices(Long id, ServicesDTO servicesDTO) {
         Services services = serviceRepo.findById(id).orElseThrow(() -> new RuntimeException("Service not found with id: " + id));
 
-        if(servicesDTO.getName() != null) services.setName(servicesDTO.getName());
+        // Validate that the service name is not null
+        if(servicesDTO.getName() != null){
+            services.setName(servicesDTO.getName());
+        } else {
+            throw new IllegalArgumentException("Service name cannot be null");
+        }
+
         if(servicesDTO.getCategory() != null) services.setCategory(Services.CategoryTypes.valueOf(servicesDTO.getCategory().toUpperCase()));
         if(servicesDTO.getDescription() != null) services.setDescription(servicesDTO.getDescription());
         if(servicesDTO.getPrice() != null) services.setPrice(servicesDTO.getPrice());

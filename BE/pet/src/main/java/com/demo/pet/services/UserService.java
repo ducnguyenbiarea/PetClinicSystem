@@ -1,6 +1,7 @@
 package com.demo.pet.services;
 
 import com.demo.pet.dtos.UserDTO;
+import com.demo.pet.dtos.subDTO.UserRoleDTO;
 import com.demo.pet.models.User;
 
 import java.util.List;
@@ -20,6 +21,8 @@ public interface UserService {
 
     UserDTO getMyInfo();
 
+    UserRoleDTO getUserRole(Long id);
+
     //Only For Admin
-    User updateRole(Long id, String newRole);
+    UserDTO updateUserRole(Long id, String newRole);
 }
