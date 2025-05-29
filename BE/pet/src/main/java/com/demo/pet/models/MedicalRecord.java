@@ -15,10 +15,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class MedicalRecord extends BaseModel {
-    @Column(name = "meeting_date", nullable = false)
-    LocalDate meetingDate;
-
-    @Column(name = "diagnosis", columnDefinition = "TEXT")
+    @Column(name = "diagnosis", columnDefinition = "TEXT", nullable = false)
     String diagnosis;
 
     @Column(name = "prescription", columnDefinition = "TEXT")
