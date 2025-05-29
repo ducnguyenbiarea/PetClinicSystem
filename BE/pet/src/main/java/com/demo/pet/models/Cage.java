@@ -16,10 +16,10 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Cage extends BaseModel {
-    @Column(name = "type", length = 50)
+    @Column(name = "type", length = 50, nullable = false)
     String type;
 
-    @Column(name = "size", length = 30)
+    @Column(name = "size", length = 30, nullable = false)
     String size;
 
     @Enumerated(EnumType.STRING)

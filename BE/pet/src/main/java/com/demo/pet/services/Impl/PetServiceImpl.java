@@ -43,6 +43,7 @@ public class PetServiceImpl implements PetService {
     @Transactional
     public PetDTO addPet(PetDTO petDTO) {
         Pet pet = new Pet();
+
         pet.setName(petDTO.getName());
         pet.setBirthDate(petDTO.getBirthDate());
         pet.setGender(petDTO.getGender() != null ? Pet.Gender.valueOf(petDTO.getGender().toUpperCase()) : null);
