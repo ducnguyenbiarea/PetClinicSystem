@@ -1,0 +1,6 @@
+Read the whole backend system and focus on creating a file in the Docs directory call BEDocs.md in order to describe every single thing about the Java Spring Boot backend. It must contain guidelines to run it, document all of the current APIs and their return format. Plan a checklist before exploration. There are some more explanation here:
+1. We need to build a front-end on it using Flutter, so document the whole API system and how we deal with them. Please document the return format of every single API system in this code.
+2. We also need to plan to build the Flutter front-end with appropriate permission granted to the right body. Focus on making this right, we should be able to handle permission on the front-end itself from the back-end results. Focus on deploying an appropriate permission granted to the right body is very important. 
+3. We also want a system that follows the flow of the back-end. For example, the back-end may have the function to create the database table for itself. That is the start. How will the back-end flow? Document all of that in the file I stated above. 
+
+Misc: Find me a name to name the database based on the Java Code given. I do not know the MySQL database name of this code.
