@@ -20,7 +20,8 @@ import java.util.List;
         "user_name",
         "password",
         "phone",
-        "email"
+        "email",
+        "roles"
 })
 public class UserDTO {
     Long id;
@@ -39,13 +40,17 @@ public class UserDTO {
     @JsonProperty("email")
     String email;
 
+    @JsonProperty("roles")
+    String roles;
+
     public static UserDTO fromEntity(User user) {
         return new UserDTO(
                 user.getId(),
                 user.getName(),
                 user.getPassWord(),
                 user.getPhone(),
-                user.getEmail()
+                user.getEmail(),
+                user.getRoles().name()
         );
     }
 }

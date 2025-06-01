@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Connection Test</title>
+</head>
+<body>
+    <h1>Pet Clinic API Connection Test</h1>
+    <button onclick="testAPI()">Test API Connection</button>
+    <button onclick="testLogin()">Test Login</button>
+    <button onclick="testMyInfo()">Test My Info (after login)</button>
+    <button onclick="testLogout()">Test Logout</button>
+    <div id="result"></div>
+
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing API connection...';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/auth/login', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.text();
+                resultDiv.innerHTML = `
+                    <h3>API Connection Success!</h3>
+                    <p>Status: ${response.status}</p>
+                    <p>Response: ${data}</p>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <h3>API Connection Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        async function testLogin() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing login...';
+            
+            try {
+                const formData = new URLSearchParams();
+                formData.append('username', 'admin@example.com');
+                formData.append('password', 'admin123');
+
+                const response = await fetch('http://localhost:8080/api/auth/login', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <h3>Login Test Result</h3>
+                    <p>Status: ${response.status}</p>
+                    <p>Response: ${JSON.stringify(data, null, 2)}</p>
+                    <p>Cookies: ${document.cookie}</p>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <h3>Login Test Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        async function testMyInfo() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing my-info endpoint...';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/users/my-info', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `
+                        <h3>My Info Test Result - SUCCESS!</h3>
+                        <p>Status: ${response.status}</p>
+                        <p>Response: ${JSON.stringify(data, null, 2)}</p>
+                        <p>Current Cookies: ${document.cookie}</p>
+                    `;
+                } else {
+                    const errorData = await response.json();
+                    resultDiv.innerHTML = `
+                        <h3>My Info Test Result - ERROR</h3>
+                        <p>Status: ${response.status}</p>
+                        <p>Error Response: ${JSON.stringify(errorData, null, 2)}</p>
+                        <p>Current Cookies: ${document.cookie}</p>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <h3>My Info Test Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        async function testLogout() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing logout...';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/auth/logout', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <h3>Logout Test Result</h3>
+                    <p>Status: ${response.status}</p>
+                    <p>Response: ${JSON.stringify(data, null, 2)}</p>
+                    <p>Cookies after logout: ${document.cookie}</p>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <h3>Logout Test Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html> 

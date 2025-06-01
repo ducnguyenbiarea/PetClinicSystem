@@ -9,10 +9,19 @@ public class Cors implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**") // Cho phép tất cả endpoint
-                .allowedOrigins("http://localhost:5173", "http://localhost:8080") // Địa chỉ Flutter Web
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
+        registry.addMapping("/**") // Allow all endpoints
+                .allowedOrigins(
+                    "http://localhost:3000",   // Flutter web default
+                    "http://localhost:5173",   // Vite default
+                    "http://localhost:8080",   // Backend port
+                    "http://localhost:8081",   // Alternative port
+                    "http://localhost:4200",   // Angular default
+                    "http://127.0.0.1:3000",   // Alternative localhost
+                    "http://127.0.0.1:5173",   // Alternative localhost
+                    "http://127.0.0.1:8080"    // Alternative localhost
+                )
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(true); // Cho phép gửi cookie (quan trọng nếu dùng session)
+                .allowCredentials(true); // Allow sending cookies (important for session-based auth)
     }
 }
