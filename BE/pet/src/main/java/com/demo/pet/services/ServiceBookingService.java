@@ -8,9 +8,16 @@ import java.util.List;
 
 
 /**
- * Service interface for managing service bookings.
- * Provides methods to create, read, update, and delete service bookings,
- * as well as to manage booking statuses.
+ * Service interface for managing medical record business logic in the Pet Clinic system.
+ * <p>
+ * Provides methods for CRUD operations and retrieval by pet or user.
+ * </p>
+ * <p>
+ *     See more in: <a href="../../../../custom-docs/ServiceOverview.html" target="_blank">ServiceOverview</a>
+ * </p>
+ *
+ * @see com.demo.pet.dtos.MedicalRecordDTO
+ * @since 1.0
  */
 public interface ServiceBookingService {
     /**
