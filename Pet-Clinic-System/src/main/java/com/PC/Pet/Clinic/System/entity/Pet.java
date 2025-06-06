@@ -23,18 +23,22 @@ public class Pet {
 	@Column(name = "status")
 	private String status;
 	
+	@Column(name = "species")
+	private String species;
+	
 	@Column(name = "service")
 	private String service;
 	
 	@Column(name = "fees")
 	private String fees;
 
-	public Pet(long id, String name, String age, String status, String service, String fees) {
+	public Pet(long id, String name, String age, String status, String species, String service, String fees) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.age = age;
 		this.status = status;
+		this.species = species;
 		this.service = service;
 		this.fees = fees;
 	}
@@ -74,6 +78,13 @@ public class Pet {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	public long getSpecies() {
+		return species;
+	}
+
+	public void setSpecies(String species) {
+		this.species = species;
 	}
 
 	public String getService() {
