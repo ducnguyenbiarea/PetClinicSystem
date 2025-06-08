@@ -4,6 +4,12 @@ Dưới đây là nội dung README ngắn gọn, dễ hiểu bằng tiếng Vi�
 
 # PetClinicSystem
 
+# Database:
+1. Database Name: test_medicalrecord
+2. Run backend to initialize the database.
+3. The SQL dump file is in [SQLDump](Docs/test_medicalrecord_2025-06-08_171201.sql)
+
+
 ## Hướng dẫn chạy Backend
 
 1. **Yêu cầu:**  
