@@ -37,28 +37,53 @@ class _UsersScreenState extends State<UsersScreen> {
         _errorMessage = null;
       });
 
+      print('Loading users from endpoint: ${AppConstants.users}'); // Debug log
       final response = await _apiService.get(AppConstants.users);
+      print('Users response: $response'); // Debug log
+      
+      List<User> users = [];
       
       if (response is List) {
-        _users = response.map((json) => User.fromJson(json as Map<String, dynamic>)).toList();
+        users = response.map((json) {
+          try {
+            return User.fromJson(json as Map<String, dynamic>);
+          } catch (e) {
+            print('Error parsing user: $e, JSON: $json');
+            return null;
+          }
+        }).where((user) => user != null).cast<User>().toList();
       } else if (response is Map<String, dynamic>) {
         if (response.containsKey('data') && response['data'] is List) {
           final data = response['data'] as List;
-          _users = data.map((json) => User.fromJson(json as Map<String, dynamic>)).toList();
-        } else {
-          _users = [User.fromJson(response)];
+          users = data.map((json) {
+            try {
+              return User.fromJson(json as Map<String, dynamic>);
+            } catch (e) {
+              print('Error parsing user: $e, JSON: $json');
+              return null;
+            }
+          }).where((user) => user != null).cast<User>().toList();
+        } else if (response.containsKey('id')) {
+          // Single user response
+          try {
+            users = [User.fromJson(response)];
+          } catch (e) {
+            print('Error parsing single user: $e, JSON: $response');
+          }
         }
-      } else {
-        _users = [];
       }
 
       setState(() {
+        _users = users;
         _isLoading = false;
       });
+      
+      print('Loaded ${_users.length} users'); // Debug log
     } catch (e) {
+      print('Error loading users: $e'); // Debug log
       setState(() {
         _isLoading = false;
-        _errorMessage = e.toString();
+        _errorMessage = 'Failed to load users: ${e.toString()}';
       });
     }
   }

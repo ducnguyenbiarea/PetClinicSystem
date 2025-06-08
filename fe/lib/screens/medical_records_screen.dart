@@ -10,6 +10,7 @@ import '../services/api_service.dart';
 import '../widgets/sidebar_navigation.dart';
 import '../widgets/cupertino_form_field.dart';
 import '../widgets/cupertino_button_primary.dart';
+import '../widgets/cupertino_date_picker_field.dart';
 
 class MedicalRecordsScreen extends StatefulWidget {
   const MedicalRecordsScreen({super.key});
@@ -25,7 +26,6 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
   bool _isLoading = true;
   String? _errorMessage;
   String _searchQuery = '';
-  String _selectedType = 'All';
 
   @override
   void initState() {
@@ -56,28 +56,53 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
         endpoint = AppConstants.medicalRecords;
       }
 
+      print('Loading medical records from endpoint: $endpoint'); // Debug log
       final response = await _apiService.get(endpoint);
+      print('Medical records response: $response'); // Debug log
+      
+      List<MedicalRecord> records = [];
       
       if (response is List) {
-        _records = response.map((json) => MedicalRecord.fromJson(json as Map<String, dynamic>)).toList();
+        records = response.map((json) {
+          try {
+            return MedicalRecord.fromJson(json as Map<String, dynamic>);
+          } catch (e) {
+            print('Error parsing medical record: $e, JSON: $json');
+            return null;
+          }
+        }).where((record) => record != null).cast<MedicalRecord>().toList();
       } else if (response is Map<String, dynamic>) {
         if (response.containsKey('data') && response['data'] is List) {
           final data = response['data'] as List;
-          _records = data.map((json) => MedicalRecord.fromJson(json as Map<String, dynamic>)).toList();
-        } else {
-          _records = [MedicalRecord.fromJson(response)];
+          records = data.map((json) {
+            try {
+              return MedicalRecord.fromJson(json as Map<String, dynamic>);
+            } catch (e) {
+              print('Error parsing medical record: $e, JSON: $json');
+              return null;
+            }
+          }).where((record) => record != null).cast<MedicalRecord>().toList();
+        } else if (response.containsKey('id')) {
+          // Single record response
+          try {
+            records = [MedicalRecord.fromJson(response)];
+          } catch (e) {
+            print('Error parsing single medical record: $e, JSON: $response');
+          }
         }
-      } else {
-        _records = [];
       }
 
       setState(() {
+        _records = records;
         _isLoading = false;
       });
+      
+      print('Loaded ${_records.length} medical records'); // Debug log
     } catch (e) {
+      print('Error loading medical records: $e'); // Debug log
       setState(() {
         _isLoading = false;
-        _errorMessage = e.toString();
+        _errorMessage = 'Failed to load medical records: ${e.toString()}';
       });
     }
   }
@@ -113,15 +138,8 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
       final matchesSearch = record.diagnosis.toLowerCase().contains(_searchQuery.toLowerCase()) ||
                            record.prescription.toLowerCase().contains(_searchQuery.toLowerCase()) ||
                            record.notes.toLowerCase().contains(_searchQuery.toLowerCase());
-      final matchesType = _selectedType == 'All' || record.recordType == _selectedType;
-      return matchesSearch && matchesType;
+      return matchesSearch;
     }).toList();
-  }
-
-  List<String> get _recordTypes {
-    final types = _records.map((record) => record.recordType).toSet().toList();
-    types.sort();
-    return ['All', ...types];
   }
 
   @override
@@ -211,7 +229,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                       ),
                     ),
                     
-                    // Search and Filter Bar
+                    // Search Bar
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: const BoxDecoration(
@@ -223,18 +241,13 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                           ),
                         ),
                       ),
-                      child: Row(
-                        children: [
-                          // Search Field
-                          Expanded(
-                            flex: 2,
                             child: Container(
                               decoration: BoxDecoration(
                                 color: const Color(AppConstants.systemGray6),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: CupertinoTextField(
-                                placeholder: 'Search records...',
+                          placeholder: 'Search records by diagnosis, prescription, or notes...',
                                 prefix: const Padding(
                                   padding: EdgeInsets.only(left: 12),
                                   child: Icon(
@@ -253,62 +266,6 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                   });
                                 },
                               ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          
-                          // Type Filter
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            decoration: BoxDecoration(
-                              color: const Color(AppConstants.systemGray6),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: CupertinoButton(
-                              padding: EdgeInsets.zero,
-                              onPressed: () {
-                                showCupertinoModalPopup(
-                                  context: context,
-                                  builder: (context) => CupertinoActionSheet(
-                                    title: const Text('Filter by Type'),
-                                    actions: _recordTypes.map((type) {
-                                      return CupertinoActionSheetAction(
-                                        onPressed: () {
-                                          setState(() {
-                                            _selectedType = type;
-                                          });
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text(type),
-                                      );
-                                    }).toList(),
-                                    cancelButton: CupertinoActionSheetAction(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: const Text('Cancel'),
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    _selectedType,
-                                    style: const TextStyle(
-                                      color: Color(AppConstants.labelColor),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  const Icon(
-                                    CupertinoIcons.chevron_down,
-                                    size: 16,
-                                    color: Color(AppConstants.systemGray),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
                       ),
                     ),
                     
@@ -604,12 +561,12 @@ class _MedicalRecordCard extends StatelessWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: _getTypeColor(record.recordType).withValues(alpha: 0.1),
+                    color: const Color(AppConstants.primaryBlue).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
-                    _getTypeIcon(record.recordType),
-                    color: _getTypeColor(record.recordType),
+                  child: const Icon(
+                    CupertinoIcons.doc_text,
+                    color: Color(AppConstants.primaryBlue),
                     size: 24,
                   ),
                 ),
@@ -618,20 +575,13 @@ class _MedicalRecordCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
+                      Text(
                               pet.name,
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
                                 color: Color(AppConstants.labelColor),
                               ),
-                            ),
-                          ),
-                          _buildTypeBadge(record.recordType),
-                        ],
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -731,60 +681,6 @@ class _MedicalRecordCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTypeBadge(String type) {
-    final color = _getTypeColor(type);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        type,
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: color,
-        ),
-      ),
-    );
-  }
-
-  Color _getTypeColor(String type) {
-    switch (type.toUpperCase()) {
-      case 'CHECKUP':
-        return const Color(AppConstants.primaryBlue);
-      case 'VACCINATION':
-        return const Color(0xFF34C759); // Green
-      case 'SURGERY':
-        return const Color(AppConstants.systemRed);
-      case 'TREATMENT':
-        return const Color(0xFFFF9500); // Orange
-      case 'EMERGENCY':
-        return const Color(0xFFFF3B30); // Red
-      default:
-        return const Color(AppConstants.systemGray);
-    }
-  }
-
-  IconData _getTypeIcon(String type) {
-    switch (type.toUpperCase()) {
-      case 'CHECKUP':
-        return CupertinoIcons.checkmark_shield;
-      case 'VACCINATION':
-        return CupertinoIcons.heart_fill;
-      case 'SURGERY':
-        return CupertinoIcons.scissors;
-      case 'TREATMENT':
-        return CupertinoIcons.bandage;
-      case 'EMERGENCY':
-        return CupertinoIcons.exclamationmark_triangle_fill;
-      default:
-        return CupertinoIcons.doc_text;
-    }
-  }
-
   String _formatDate(String dateString) {
     try {
       final date = DateTime.parse(dateString);
@@ -818,12 +714,9 @@ class _MedicalRecordFormDialogState extends State<_MedicalRecordFormDialog> {
   final _prescriptionController = TextEditingController();
   final _notesController = TextEditingController();
   
-  String _recordType = 'CHECKUP';
   DateTime? _nextMeetingDate;
   int? _selectedPetId;
   bool _isLoading = false;
-
-  final List<String> _recordTypes = ['CHECKUP', 'VACCINATION', 'SURGERY', 'TREATMENT', 'EMERGENCY'];
 
   @override
   void initState() {
@@ -832,7 +725,6 @@ class _MedicalRecordFormDialogState extends State<_MedicalRecordFormDialog> {
       _diagnosisController.text = widget.record!.diagnosis;
       _prescriptionController.text = widget.record!.prescription;
       _notesController.text = widget.record!.notes;
-      _recordType = widget.record!.recordType;
       _selectedPetId = widget.record!.petId;
       try {
         if (widget.record!.nextMeetingDate.isNotEmpty) {
@@ -948,73 +840,6 @@ class _MedicalRecordFormDialogState extends State<_MedicalRecordFormDialog> {
               ),
               const SizedBox(height: 16),
               
-              // Record Type Selection
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Record Type',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Color(AppConstants.labelColor),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: CupertinoColors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: const Color(AppConstants.systemGray4),
-                      ),
-                    ),
-                    child: CupertinoButton(
-                      padding: const EdgeInsets.all(16),
-                      onPressed: () {
-                        showCupertinoModalPopup(
-                          context: context,
-                          builder: (context) => CupertinoActionSheet(
-                            title: const Text('Select Record Type'),
-                            actions: _recordTypes.map((type) {
-                              return CupertinoActionSheetAction(
-                                onPressed: () {
-                                  setState(() {
-                                    _recordType = type;
-                                  });
-                                  Navigator.pop(context);
-                                },
-                                child: Text(type),
-                              );
-                            }).toList(),
-                            cancelButton: CupertinoActionSheetAction(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text('Cancel'),
-                            ),
-                          ),
-                        );
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            _recordType,
-                            style: const TextStyle(
-                              color: Color(AppConstants.labelColor),
-                            ),
-                          ),
-                          const Icon(
-                            CupertinoIcons.chevron_down,
-                            color: Color(AppConstants.systemGray),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              
               // Diagnosis
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1094,100 +919,17 @@ class _MedicalRecordFormDialogState extends State<_MedicalRecordFormDialog> {
               const SizedBox(height: 16),
               
               // Next Meeting Date
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Next Meeting Date (Optional)',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Color(AppConstants.labelColor),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: CupertinoColors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: const Color(AppConstants.systemGray4),
-                      ),
-                    ),
-                    child: CupertinoButton(
-                      padding: const EdgeInsets.all(16),
-                      onPressed: () {
-                        showCupertinoModalPopup(
-                          context: context,
-                          builder: (context) => Container(
-                            height: 300,
-                            color: CupertinoColors.white,
-                            child: Column(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(16),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      CupertinoButton(
-                                        onPressed: () => Navigator.of(context).pop(),
-                                        child: const Text('Cancel'),
-                                      ),
-                                      CupertinoButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            _nextMeetingDate = null;
-                                          });
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text('Clear'),
-                                      ),
-                                      CupertinoButton(
-                                        onPressed: () => Navigator.of(context).pop(),
-                                        child: const Text('Done'),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Expanded(
-                                  child: CupertinoDatePicker(
-                                    mode: CupertinoDatePickerMode.date,
-                                    initialDateTime: _nextMeetingDate ?? DateTime.now().add(const Duration(days: 7)),
-                                    minimumDate: DateTime.now(),
-                                    onDateTimeChanged: (date) {
+              CupertinoDatePickerField(
+                label: 'Next Meeting Date (Optional)',
+                selectedDate: _nextMeetingDate,
+                onDateChanged: (date) {
                                       setState(() {
                                         _nextMeetingDate = date;
                                       });
                                     },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            _nextMeetingDate != null
-                                ? DateFormat('MMM dd, yyyy').format(_nextMeetingDate!)
-                                : 'Select next meeting date (optional)',
-                            style: TextStyle(
-                              color: _nextMeetingDate != null
-                                  ? const Color(AppConstants.labelColor)
-                                  : const Color(AppConstants.systemGray),
-                            ),
-                          ),
-                          const Icon(
-                            CupertinoIcons.calendar,
-                            color: Color(AppConstants.systemGray),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                placeholder: 'Select next meeting date (optional)',
+                minimumDate: DateTime.now(),
+                isRequired: false,
               ),
             ],
           ),
@@ -1220,7 +962,6 @@ class _MedicalRecordFormDialogState extends State<_MedicalRecordFormDialog> {
           prescription: _prescriptionController.text.trim(),
           notes: _notesController.text.trim(),
           nextMeetingDate: nextMeetingDateString,
-          recordType: _recordType,
           petId: _selectedPetId!,
           userId: widget.authProvider.currentUser?.id ?? 0,
         );
@@ -1232,7 +973,6 @@ class _MedicalRecordFormDialogState extends State<_MedicalRecordFormDialog> {
           prescription: _prescriptionController.text.trim(),
           notes: _notesController.text.trim(),
           nextMeetingDate: nextMeetingDateString,
-          recordType: _recordType,
         );
         await widget.onSave(recordUpdate);
       }

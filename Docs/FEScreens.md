@@ -141,4 +141,102 @@ This document outlines potential front-end screens based on the backend API capa
 ---
 
 This revised list aims for a more streamlined front-end by consolidating management tasks into fewer, more powerful screens, leveraging role-based permissions to tailor the user experience. Each screen would still be composed of various UI elements to interact with the backend.
+
+# PetClinicSystem FE Screens Documentation
+
+This document lists all main screens in the `fe` (Flutter frontend) folder, grouped by user role: **Admin**, **Doctor**, **Staff**, and **Owner**. Each screen's purpose and main features are described based on the codebase.
+
+---
+
+## 1. Admin Screens
+
+- **Dashboard** (`dashboard_screen.dart`)
+  - Overview of system stats (users, bookings, records, etc.).
+  - Quick actions for user, booking, and record management.
+- **User Management** (`users_screen.dart`)
+  - List, search, filter, add, edit, delete users.
+  - Change user roles (Owner, Staff, Doctor, Admin).
+- **Bookings** (`bookings_screen.dart`)
+  - View, search, filter, update, and cancel all bookings in the system.
+- **Medical Records** (`medical_records_screen.dart`)
+  - View, search, add, edit, and delete all medical records.
+- **Services** (`services_screen.dart`)
+  - View all available services.
+- **Cages** (`cages_screen.dart`)
+  - Manage cages (list, filter, assign pets).
+
+---
+
+## 2. Doctor Screens
+
+- **Dashboard**
+  - Overview of bookings and medical records relevant to the doctor.
+- **Bookings**
+  - View, update status, and manage bookings assigned to the doctor.
+- **Medical Records**
+  - View, add, edit, and delete medical records for pets under their care.
+- **Services**
+  - View available services.
+- **Cages**
+  - View and manage cages (if permitted).
+
+---
+
+## 3. Staff Screens
+
+- **Dashboard**
+  - Overview of bookings, cages, and services.
+- **Bookings**
+  - View, update, and manage all bookings.
+- **Medical Records**
+  - View and manage medical records (if permitted).
+- **Services**
+  - View available services.
+- **Cages**
+  - Manage cages and assign pets.
+
+---
+
+## 4. Owner Screens
+
+- **Dashboard**
+  - Personalized overview: My Pets, Active Bookings, Quick Actions.
+- **My Pets** (`my_pets_screen.dart`)
+  - List, add, edit, and view details of owned pets.
+  - View medical records for each pet.
+- **My Bookings** (`my_bookings_screen.dart`)
+  - List, create, and cancel bookings for owned pets.
+- **Bookings**
+  - Create new bookings (service appointment, boarding, grooming, etc.).
+- **Medical Records**
+  - View medical records for owned pets.
+- **Services**
+  - Browse and book available services for owned pets.
+
+---
+
+## Common Screens (All Roles)
+
+- **Login** (`login_screen.dart`)
+  - User authentication.
+- **Register** (`register_screen.dart`)
+  - New user registration.
+- **Profile** (`profile_screen.dart`)
+  - View and edit personal information.
+- **Access Denied** (`access_denied_screen.dart`)
+  - Shown when a user tries to access a restricted screen.
+
+---
+
+## Notes
+- **Sidebar Navigation** is present on all main screens for easy access.
+- **Role-based Access**: Many screens check the user's role and only show features/actions permitted for that role.
+- **Screen Usage**:
+  - **Admin**: Full access to all management features.
+  - **Doctor**: Focus on medical records and bookings.
+  - **Staff**: Focus on bookings, cages, and services.
+  - **Owner**: Focus on their own pets, bookings, and records.
+
+---
+
 <!-- ...existing code... -->

@@ -5,7 +5,6 @@ class MedicalRecord {
   final String notes;
   final String nextMeetingDate;
   final String recordDate;
-  final String recordType;
   final int petId;
   final int userId;
 
@@ -16,7 +15,6 @@ class MedicalRecord {
     required this.notes,
     required this.nextMeetingDate,
     required this.recordDate,
-    required this.recordType,
     required this.petId,
     required this.userId,
   });
@@ -29,7 +27,6 @@ class MedicalRecord {
       notes: json['notes'] ?? '',
       nextMeetingDate: json['next_meeting_date'] ?? '',
       recordDate: json['record_date'] ?? '',
-      recordType: json['record_type'] ?? 'CHECKUP',
       petId: json['pet_id'] ?? 0,
       userId: json['user_id'] ?? 0,
     );
@@ -43,7 +40,6 @@ class MedicalRecord {
       'notes': notes,
       'next_meeting_date': nextMeetingDate,
       'record_date': recordDate,
-      'record_type': recordType,
       'pet_id': petId,
       'user_id': userId,
     };
@@ -56,7 +52,6 @@ class MedicalRecord {
     String? notes,
     String? nextMeetingDate,
     String? recordDate,
-    String? recordType,
     int? petId,
     int? userId,
   }) {
@@ -67,7 +62,6 @@ class MedicalRecord {
       notes: notes ?? this.notes,
       nextMeetingDate: nextMeetingDate ?? this.nextMeetingDate,
       recordDate: recordDate ?? this.recordDate,
-      recordType: recordType ?? this.recordType,
       petId: petId ?? this.petId,
       userId: userId ?? this.userId,
     );
@@ -75,7 +69,7 @@ class MedicalRecord {
 
   @override
   String toString() {
-    return 'MedicalRecord{id: $id, diagnosis: $diagnosis, prescription: $prescription, notes: $notes, nextMeetingDate: $nextMeetingDate, recordDate: $recordDate, recordType: $recordType, petId: $petId, userId: $userId}';
+    return 'MedicalRecord{id: $id, diagnosis: $diagnosis, prescription: $prescription, notes: $notes, nextMeetingDate: $nextMeetingDate, recordDate: $recordDate, petId: $petId, userId: $userId}';
   }
 
   @override
@@ -89,7 +83,6 @@ class MedicalRecord {
           notes == other.notes &&
           nextMeetingDate == other.nextMeetingDate &&
           recordDate == other.recordDate &&
-          recordType == other.recordType &&
           petId == other.petId &&
           userId == other.userId;
 
@@ -101,7 +94,6 @@ class MedicalRecord {
       notes.hashCode ^
       nextMeetingDate.hashCode ^
       recordDate.hashCode ^
-      recordType.hashCode ^
       petId.hashCode ^
       userId.hashCode;
 }
@@ -111,7 +103,6 @@ class MedicalRecordCreate {
   final String prescription;
   final String notes;
   final String nextMeetingDate;
-  final String recordType;
   final int petId;
   final int userId;
 
@@ -120,7 +111,6 @@ class MedicalRecordCreate {
     required this.prescription,
     required this.notes,
     required this.nextMeetingDate,
-    required this.recordType,
     required this.petId,
     required this.userId,
   });
@@ -131,7 +121,6 @@ class MedicalRecordCreate {
       'prescription': prescription,
       'notes': notes,
       'next_meeting_date': nextMeetingDate,
-      'record_type': recordType,
       'pet_id': petId,
       'user_id': userId,
     };
@@ -143,14 +132,12 @@ class MedicalRecordUpdate {
   final String prescription;
   final String notes;
   final String nextMeetingDate;
-  final String recordType;
 
   MedicalRecordUpdate({
     required this.diagnosis,
     required this.prescription,
     required this.notes,
     required this.nextMeetingDate,
-    required this.recordType,
   });
 
   Map<String, dynamic> toJson() {
@@ -159,7 +146,6 @@ class MedicalRecordUpdate {
       'prescription': prescription,
       'notes': notes,
       'next_meeting_date': nextMeetingDate,
-      'record_type': recordType,
     };
   }
 } 

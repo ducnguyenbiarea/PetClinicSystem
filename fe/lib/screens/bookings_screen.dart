@@ -59,28 +59,53 @@ class _BookingsScreenState extends State<BookingsScreen> {
         endpoint = AppConstants.bookings;
       }
 
+      print('Loading bookings from endpoint: $endpoint'); // Debug log
       final response = await _apiService.get(endpoint);
+      print('Bookings response: $response'); // Debug log
+      
+      List<Booking> bookings = [];
       
       if (response is List) {
-        _bookings = response.map((json) => Booking.fromJson(json as Map<String, dynamic>)).toList();
+        bookings = response.map((json) {
+          try {
+            return Booking.fromJson(json as Map<String, dynamic>);
+          } catch (e) {
+            print('Error parsing booking: $e, JSON: $json');
+            return null;
+          }
+        }).where((booking) => booking != null).cast<Booking>().toList();
       } else if (response is Map<String, dynamic>) {
         if (response.containsKey('data') && response['data'] is List) {
           final data = response['data'] as List;
-          _bookings = data.map((json) => Booking.fromJson(json as Map<String, dynamic>)).toList();
-        } else {
-          _bookings = [Booking.fromJson(response)];
+          bookings = data.map((json) {
+            try {
+              return Booking.fromJson(json as Map<String, dynamic>);
+            } catch (e) {
+              print('Error parsing booking: $e, JSON: $json');
+              return null;
+            }
+          }).where((booking) => booking != null).cast<Booking>().toList();
+        } else if (response.containsKey('id')) {
+          // Single booking response
+          try {
+            bookings = [Booking.fromJson(response)];
+          } catch (e) {
+            print('Error parsing single booking: $e, JSON: $response');
+          }
         }
-      } else {
-        _bookings = [];
       }
 
       setState(() {
+        _bookings = bookings;
         _isLoading = false;
       });
+      
+      print('Loaded ${_bookings.length} bookings'); // Debug log
     } catch (e) {
+      print('Error loading bookings: $e'); // Debug log
       setState(() {
         _isLoading = false;
-        _errorMessage = e.toString();
+        _errorMessage = 'Failed to load bookings: ${e.toString()}';
       });
     }
   }
