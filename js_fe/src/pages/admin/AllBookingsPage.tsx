@@ -82,9 +82,9 @@ const AllBookingsPage: React.FC = () => {
         bookingsData = await apiService.getAllBookings();
       }
       
-      // Load related data
+      // Load related data - always load all pets for admin/staff to see pet names in bookings
       const [petsData, servicesData, usersData] = await Promise.all([
-        isOwner() ? apiService.getMyPets() : apiService.getAllPets(),
+        apiService.getAllPets(), // Always load all pets for name lookup
         apiService.getAllServices(),
         isOwner() ? Promise.resolve([]) : apiService.getAllUsers(),
       ]);

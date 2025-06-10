@@ -28,3 +28,36 @@ Please fix the colors of the Profile box for Staff and Admin. Choose a more dim 
 And also, the Revenue Analytics is now wrong. Maybe only the Admin should have Analytics screen, not Doctor or Staff. Fix that.
 
 The revenue should be calculated by the total sum of money of the bookings. That is the source of money. Display that in the Revenue, calculated by the Start Date of any bookings. That is for date-based analytics.
+
+
+-- Problems Next:
+
+The login screen still contains those test accounts. This is strictly prohibited. Remove those test accounts, and generate me a background images with colors that suits the login screen. 
+
+In the screens, the Bookings related screens have those Pet Names are No Pet Assigned. This means that there is something unmatched between the code of the Java Spring Boot backend and the React.js frontend. It is important that it loads the Pet name successfully within the range of Bookings related.
+
+In the Analytics screen of the Admin Login, every analytics should be displayed correctly. 
+Total Revenue is always $0.0
+Booking Status Overview always 0
+0
+Completed
+
+0
+Pending
+
+0
+Cancelled
+
+Always 0
+
+
+Monthly Performance (Last 6 Months)
+Month	Bookings	Revenue
+Jan 2025	0	$0.00
+Feb 2025	0	$0.00
+Mar 2025	0	$0.00
+Apr 2025	0	$0.00
+May 2025	0	$0.00
+Jun 2025	5	$0.00
+
+Revenue is always 0, please make the revenue correctly.

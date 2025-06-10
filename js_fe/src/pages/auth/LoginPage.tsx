@@ -11,7 +11,6 @@ import {
   Link,
   Grid,
   Divider,
-  Stack,
 } from '@mui/material';
 import { useNavigate, Link as RouterLink, useLocation } from 'react-router-dom';
 import { Login, Pets } from '@mui/icons-material';
@@ -72,22 +71,6 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  // Test account login handlers
-  const handleTestLogin = async (email: string, password: string, role: string) => {
-    try {
-      await login({ username: email, password });
-    } catch (err) {
-      console.error(`${role} login failed:`, err);
-    }
-  };
-
-  const testAccounts = [
-    { role: 'Admin', email: 'admin@example.com', password: 'admin123', color: 'error' as const },
-    { role: 'Doctor', email: 'doctor@example.com', password: 'doctor123', color: 'success' as const },
-    { role: 'Staff', email: 'staff@example.com', password: 'staff123', color: 'warning' as const },
-    { role: 'Owner', email: 'owner@example.com', password: 'owner123', color: 'primary' as const },
-  ];
-
   return (
     <Box
       sx={{
@@ -95,7 +78,15 @@ const LoginPage: React.FC = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: `
+          linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(33, 150, 243, 0.1) 100%),
+          radial-gradient(circle at top right, rgba(156, 39, 176, 0.15) 0%, transparent 50%),
+          radial-gradient(circle at bottom left, rgba(255, 152, 0, 0.15) 0%, transparent 50%),
+          linear-gradient(45deg, #f8f9fa 25%, transparent 25%, transparent 75%, #f8f9fa 75%, #f8f9fa),
+          linear-gradient(-45deg, #f8f9fa 25%, transparent 25%, transparent 75%, #f8f9fa 75%, #f8f9fa)
+        `,
+        backgroundSize: '100% 100%, 200% 200%, 200% 200%, 20px 20px, 20px 20px',
+        backgroundPosition: '0 0, 0 0, 100% 100%, 0 0, 10px 10px',
         py: 3,
       }}
     >
@@ -103,48 +94,53 @@ const LoginPage: React.FC = () => {
         <Grid container spacing={4} alignItems="center" justifyContent="center">
           {/* Left side - Welcome message */}
           <Grid item xs={12} md={6}>
-            <Box sx={{ textAlign: { xs: 'center', md: 'left' }, color: 'white', mb: { xs: 3, md: 0 } }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: { xs: 'center', md: 'flex-start' }, mb: 2 }}>
-                <Pets sx={{ fontSize: 48, mr: 2 }} />
-                <Typography variant="h3" component="h1" sx={{ fontWeight: 700 }}>
+            <Box sx={{ 
+              textAlign: { xs: 'center', md: 'left' }, 
+              color: '#2c3e50', 
+              mb: { xs: 3, md: 0 },
+              p: 3,
+              backgroundColor: 'rgba(255, 255, 255, 0.9)',
+              borderRadius: 3,
+              backdropFilter: 'blur(10px)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            }}>
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: { xs: 'center', md: 'flex-start' }, 
+                mb: 3 
+              }}>
+                <Pets sx={{ 
+                  fontSize: 56, 
+                  mr: 2, 
+                  color: '#4CAF50',
+                  filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.1))'
+                }} />
+                <Typography variant="h3" component="h1" sx={{ 
+                  fontWeight: 700,
+                  background: 'linear-gradient(45deg, #4CAF50, #2196F3)',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}>
                   Pet Clinic
                 </Typography>
               </Box>
-              <Typography variant="h5" sx={{ mb: 2, opacity: 0.9 }}>
+              <Typography variant="h5" sx={{ 
+                mb: 2, 
+                color: '#34495e',
+                fontWeight: 500,
+              }}>
                 Welcome Back!
               </Typography>
-              <Typography variant="body1" sx={{ opacity: 0.8, mb: 3 }}>
-                Sign in to manage your pet's health records, book appointments, and access all our veterinary services.
+              <Typography variant="body1" sx={{ 
+                color: '#5a6c7d',
+                lineHeight: 1.6,
+                fontSize: '1.1rem',
+              }}>
+                Sign in to manage your pet's health records, book appointments, and access all our veterinary services. 
+                Your trusted partner in pet care and wellness.
               </Typography>
-              
-              {/* Test Accounts for Development */}
-              <Box sx={{ mt: 4 }}>
-                <Typography variant="h6" sx={{ mb: 2, opacity: 0.9 }}>
-                  Quick Test Login:
-                </Typography>
-                <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ gap: 1 }}>
-                  {testAccounts.map((account) => (
-                    <Button
-                      key={account.role}
-                      size="small"
-                      variant="outlined"
-                      color={account.color}
-                      disabled={isLoading}
-                      onClick={() => handleTestLogin(account.email, account.password, account.role)}
-                      sx={{
-                        color: 'white',
-                        borderColor: 'rgba(255, 255, 255, 0.5)',
-                        '&:hover': {
-                          borderColor: 'white',
-                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                        },
-                      }}
-                    >
-                      {account.role}
-                    </Button>
-                  ))}
-                </Stack>
-              </Box>
             </Box>
           </Grid>
 
@@ -155,13 +151,24 @@ const LoginPage: React.FC = () => {
               sx={{
                 p: 4,
                 borderRadius: 3,
-                backdropFilter: 'blur(10px)',
+                backdropFilter: 'blur(20px)',
                 backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
               }}
             >
               <Box sx={{ textAlign: 'center', mb: 3 }}>
-                <Login sx={{ fontSize: 48, color: 'primary.main', mb: 1 }} />
-                <Typography variant="h4" component="h2" sx={{ fontWeight: 600, mb: 1 }}>
+                <Login sx={{ 
+                  fontSize: 48, 
+                  color: 'primary.main', 
+                  mb: 1,
+                  filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.1))'
+                }} />
+                <Typography variant="h4" component="h2" sx={{ 
+                  fontWeight: 600, 
+                  mb: 1,
+                  color: '#2c3e50',
+                }}>
                   Sign In
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -187,7 +194,14 @@ const LoginPage: React.FC = () => {
                   required
                   autoComplete="email"
                   autoFocus
-                  sx={{ mb: 2 }}
+                  sx={{ 
+                    mb: 2,
+                    '& .MuiOutlinedInput-root': {
+                      '&:hover fieldset': {
+                        borderColor: '#4CAF50',
+                      },
+                    },
+                  }}
                 />
 
                 <TextField
@@ -200,7 +214,14 @@ const LoginPage: React.FC = () => {
                   onChange={handleChange}
                   required
                   autoComplete="current-password"
-                  sx={{ mb: 3 }}
+                  sx={{ 
+                    mb: 3,
+                    '& .MuiOutlinedInput-root': {
+                      '&:hover fieldset': {
+                        borderColor: '#4CAF50',
+                      },
+                    },
+                  }}
                 />
 
                 <Button
@@ -209,7 +230,15 @@ const LoginPage: React.FC = () => {
                   variant="contained"
                   size="large"
                   disabled={isLoading}
-                  sx={{ mb: 2 }}
+                  sx={{ 
+                    mb: 2,
+                    background: 'linear-gradient(45deg, #4CAF50, #45a049)',
+                    boxShadow: '0 4px 15px rgba(76, 175, 80, 0.4)',
+                    '&:hover': {
+                      background: 'linear-gradient(45deg, #45a049, #3e8e41)',
+                      boxShadow: '0 6px 20px rgba(76, 175, 80, 0.6)',
+                    },
+                  }}
                 >
                   {isLoading ? (
                     <CircularProgress size={24} color="inherit" />
@@ -227,7 +256,18 @@ const LoginPage: React.FC = () => {
                 <Box sx={{ textAlign: 'center' }}>
                   <Typography variant="body2" color="text.secondary">
                     Don't have an account?{' '}
-                    <Link component={RouterLink} to="/register" underline="hover">
+                    <Link 
+                      component={RouterLink} 
+                      to="/register" 
+                      underline="hover"
+                      sx={{
+                        color: '#4CAF50',
+                        fontWeight: 500,
+                        '&:hover': {
+                          color: '#45a049',
+                        },
+                      }}
+                    >
                       Sign up
                     </Link>
                   </Typography>

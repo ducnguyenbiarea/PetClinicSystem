@@ -79,6 +79,24 @@ const AnalyticsPage: React.FC = () => {
         apiService.getAllMedicalRecords(),
       ]);
 
+      // Debug logging
+      console.log('Analytics data loaded:', {
+        bookings: bookings.length,
+        services: services.length,
+        pets: pets.length,
+        users: users.length,
+        records: records.length
+      });
+      
+      console.log('Services with prices:', services.map(s => ({ id: s.id, name: s.service_name, price: s.price })));
+      console.log('Bookings sample:', bookings.slice(0, 3).map(b => ({ id: b.id, service_id: b.service_id, status: b.status, pet_id: b.pet_id })));
+      
+      // Validate that services have valid prices
+      const servicesWithInvalidPrices = services.filter(s => !s.price || s.price <= 0);
+      if (servicesWithInvalidPrices.length > 0) {
+        console.warn('Services with invalid/zero prices:', servicesWithInvalidPrices);
+      }
+
       // Calculate analytics
       const servicesMap = new Map(services.map(s => [s.id, s]));
       
@@ -86,12 +104,14 @@ const AnalyticsPage: React.FC = () => {
       let totalRevenue = 0;
       const serviceStats = new Map<number, { count: number; revenue: number; name: string }>();
       
-      // Calculate revenue based on completed bookings
+      // Calculate revenue based on ALL confirmed and completed bookings (not just completed)
+      const paidBookings = bookings.filter(b => b.status === 'COMPLETED' || b.status === 'CONFIRMED');
       const completedBookings = bookings.filter(b => b.status === 'COMPLETED');
       
-      completedBookings.forEach(booking => {
+      // Use confirmed and completed bookings for revenue calculation
+      paidBookings.forEach(booking => {
         const service = servicesMap.get(booking.service_id);
-        if (service) {
+        if (service && service.price > 0) {
           totalRevenue += service.price;
           
           const current = serviceStats.get(service.id) || { count: 0, revenue: 0, name: service.service_name };
@@ -121,12 +141,12 @@ const AnalyticsPage: React.FC = () => {
           return bookingMonth.year() === month.year() && bookingMonth.month() === month.month();
         });
         
-        // Calculate revenue for completed bookings in this month
+        // Calculate revenue for confirmed and completed bookings in this month
         let monthRevenue = 0;
-        const monthCompletedBookings = monthBookings.filter(b => b.status === 'COMPLETED');
-        monthCompletedBookings.forEach(booking => {
+        const monthPaidBookings = monthBookings.filter(b => b.status === 'COMPLETED' || b.status === 'CONFIRMED');
+        monthPaidBookings.forEach(booking => {
           const service = servicesMap.get(booking.service_id);
-          if (service) {
+          if (service && service.price > 0) {
             monthRevenue += service.price;
           }
         });
@@ -142,12 +162,12 @@ const AnalyticsPage: React.FC = () => {
       const recentActivity = [
         ...bookings.slice(-5).map(b => ({
           type: 'booking',
-          description: `New booking for ${servicesMap.get(b.service_id)?.service_name || 'service'}`,
+          description: `New booking for ${servicesMap.get(b.service_id)?.service_name || 'Unknown Service'}`,
           date: b.start_date,
         })),
         ...records.slice(-3).map(r => ({
           type: 'medical',
-          description: `Medical record created`,
+          description: `Medical record created for pet`,
           date: r.record_date,
         })),
       ].sort((a, b) => dayjs(b.date).unix() - dayjs(a.date).unix()).slice(0, 10);
