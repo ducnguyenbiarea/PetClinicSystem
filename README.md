@@ -119,6 +119,16 @@ Dự án này là một hệ thống quản lý phòng khám thú cưng full-sta
 
 ## Cấu Trúc Dự Án
 
+## Chức Năng Hệ Thống
+
+- Quản lý hồ sơ thú cưng: thêm/sửa/xóa, theo dõi lịch sử khám.
+- Đặt lịch khám: khách hàng tự đặt, quản lý và nhắc lịch.
+- Quản lý thuốc và đơn thuốc: kê đơn, theo dõi.
+- Thống kê & báo cáo:doanh thu, đặt lịch hẹn sắp tới.
+
+
+
+
 ```
 BE/           # Backend (Java Spring Boot)
   pet/
