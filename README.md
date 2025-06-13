@@ -3,7 +3,6 @@
 Dự án này là một hệ thống quản lý phòng khám thú cưng full-stack với backend Java Spring Boot và frontend React.js (TypeScript). Hướng dẫn này sẽ giúp bạn cài đặt và chạy ứng dụng trên **Windows**.
 
 ---
-
 ## Mục Lục
 - [Yêu Cầu Chuẩn Bị](#yêu-cầu-chuẩn-bị)
 - [Cài Đặt Backend (Java Spring Boot)](#cài-đặt-backend-java-spring-boot)
