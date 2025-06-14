@@ -27,11 +27,6 @@ public class SecurityConfig{
                         .requestMatchers("/static/**", "/public/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/services/**").authenticated()
-                        .requestMatchers("/api/pets/**").authenticated()
-                        .requestMatchers("/api/cages/**").authenticated()
-                        .requestMatchers("/api/records/**").authenticated()
-                        .requestMatchers("/api/users/**").authenticated()
-                        .requestMatchers("/api/bookings/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .cors(Customizer.withDefaults()) // <-- Cho phép xử lý CORS
